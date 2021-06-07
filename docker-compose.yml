@@ -1,0 +1,67 @@
+version: '3.9'
+
+services:
+  client:
+    build:
+      context: ./client
+    container_name: /react-vitejs
+    volumes:
+      - ./client:/app
+      - /app/node_modules/
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+#      TAILWIND_MODE: watch
+    stdin_open: true
+    tty: true
+    command: yarn dev
+    ports:
+      - "3000:3000"
+
+  api:
+    build:
+      context: ./api
+    container_name: api
+    command: start
+    init: true
+    environment:
+      - PORT=3001
+      - URL=http://localhost
+      - MONGO_URL=mongodb://api_mongo:27017
+      - DB_NAME=todo
+      - API_VERSION=v1
+    volumes:
+      - ./api:/app
+
+  api_mongo:
+    image: mongo:latest # build directly from dockerhub
+    container_name: api_mongo
+    volumes:
+      - mongodb_api:/data/db
+    ports:
+      - '27017:27017'
+
+#  nginx:
+#    image: nginx:1.18.0-alpine
+#    ports:
+#      - '8080:80'
+#    volumes:
+#      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+
+volumes:
+  mongodb_api:
+
+
+#  OLD DOCKER COMPOSE CONFIG
+#  frontend:
+#    build:
+#      context: ./frontend
+#    container_name: frontend
+#    command: yarn start
+#    environment:
+#      - CHOKIDAR_USEPOLLING=true
+#    stdin_open: true
+#    tty: true
+#    volumes:
+#      - ./frontend/src:/usr/app/src
+#    ports:
+#      - "3000:3000"
