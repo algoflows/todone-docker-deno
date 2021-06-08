@@ -9,5 +9,3 @@ COPY deps.ts .
 RUN deno cache --unstable deps.ts
 
 ADD . .
-
-CMD ["denon"]
